@@ -1,0 +1,13 @@
+flask
+flask-cors
+flask-session
+flask-login
+werkzeug
+flask_sqlalchemy
+chromadb
+sentence-transformers
+ollama
+pypdf2
+pdfplumber
+python-docx
+python-dotenv

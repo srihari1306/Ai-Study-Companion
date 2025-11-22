@@ -1,0 +1,31 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Environment variables
+.env
+
+# SQLite databases and instance
+instance/
+*.db
+
+# Flask uploads
+backend/uploads/
+backend/chroma_db/
+
+# Ollama models (if any generated locally)
+*.gguf
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node / React
+frontend/node_modules/
+frontend/dist/
+npm-debug.log
+yarn-error.log
+
+# Build cache
+.cache/
