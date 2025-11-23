@@ -13,6 +13,8 @@ from routes.chat import chat_bp
 from routes.workspace import workspace_bp
 from routes.documents import document_bp
 from routes.study_plan import study_plan_bp
+from routes.flashcards import flashcard_bp
+from routes.summary import summarization_bp
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -33,6 +35,8 @@ app.register_blueprint(workspace_bp)
 app.register_blueprint(chat_bp)
 app.register_blueprint(document_bp)
 app.register_blueprint(study_plan_bp)
+app.register_blueprint(flashcard_bp)
+app.register_blueprint(summarization_bp)
 
 with app.app_context():
     db.create_all()

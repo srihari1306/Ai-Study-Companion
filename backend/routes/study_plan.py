@@ -54,5 +54,6 @@ def get_study_plan(workspace_id):
             "cached": False
         })
     except Exception as e:
+        db.session.rollback()
         print(f"Error generating plan: {e}")
         return jsonify({"error":"Failed to generate study plan"})

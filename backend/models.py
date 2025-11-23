@@ -53,8 +53,23 @@ class ChatMessage(db.Model):
 class StudyPlan(db.Model):
     __tablename__ = 'study_plans'
     id = db.Column(db.Integer, primary_key=True)
-    workspace_id = db.Column(db.Integer, db.ForeignKey('workspace.id'), unique=True)
+    workspace_id = db.Column(db.Integer, db.ForeignKey('workspace.id'))
     plan_text = db.Column(db.Text, nullable=False)
     generated_at = db.Column(db.DateTime, default=datetime.now)
 
     workspace = db.relationship("Workspace", backref='study_plan', lazy=True)
+
+class Flashcard(db.Model):
+    __tablename__='flashcards'
+    id = db.Column(db.Integer, primary_key=True)
+    workspace_id = db.Column(db.Integer, db.ForeignKey('workspace.id'))
+    question = db.Column(db.Text, nullable = False)
+    answer = db.Column(db.Text, nullable=False)
+    easiness_factor = db.Column(db.Float, default=2.5)
+    interval = db.Column(db.Integer, default= 0)
+    repetitions = db.Column(db.Integer, default= 0)
+    next_review = db.Column(db.DateTime, default= datetime.now())
+    created_at = db.Column(db.DateTime, default= datetime.now())
+    last_reviewed = db.Column(db.DateTime)
+
+    workspace = db.relationship("Workspace", backref='flashcards', lazy=True)

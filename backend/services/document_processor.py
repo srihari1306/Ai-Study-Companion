@@ -1,16 +1,31 @@
 import pdfplumber
 from docx import Document
+import threading
+from concurrent.futures import ThreadPoolExecutor
 import re
 
 class DocumentProcessor:
     @staticmethod
     def extract_text_from_pdf(file_path):
+        """Optimized PDF extraction with parallel page processing"""
         text = ""
-        with pdfplumber.open(file_path) as pdf:
-            for page in pdf.pages:
-                page_text = page.extract_text()
-                if page_text:
-                    text += page_text + "\n"
+        
+        try:
+            with pdfplumber.open(file_path) as pdf:
+                with ThreadPoolExecutor(max_workers=4) as executor:
+                    page_texts = list(executor.map(
+                        lambda page: page.extract_text() or "",
+                        pdf.pages
+                    ))
+                text = "\n".join(page_texts)
+        except Exception as e:
+            print(f"Error extracting PDF using threads: {e}")
+            with pdfplumber.open(file_path) as pdf:
+                for page in pdf.pages:
+                    page_text = page.extract_text()
+                    if page_text:
+                        text += page_text + "\n"
+        
         return text
     
     @staticmethod

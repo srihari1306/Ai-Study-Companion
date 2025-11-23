@@ -635,18 +635,18 @@ export default function StudyPlan({ workspaceId, workspaceName, deadline }) {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`rounded-3xl p-8 shadow-2xl text-white ${
+        className={`rounded-2xl p-8 text-white ${
           daysLeft < 7 
-            ? 'bg-gradient-to-r from-red-500 to-pink-600' 
+            ? 'bg-gradient-to-r from-rose-500 to-pink-500' 
             : daysLeft < 14
-            ? 'bg-gradient-to-r from-orange-500 to-red-500'
-            : 'bg-gradient-to-r from-green-500 to-teal-600'
+            ? 'bg-gradient-to-r from-amber-500 to-orange-500'
+            : 'bg-gradient-to-r from-emerald-500 to-teal-500'
         }`}
       >
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-black mb-2">Your Deadline 🎯</h2>
-            <p className="text-xl font-semibold">
+            <h2 className="text-2xl font-bold mb-2">Your Deadline</h2>
+            <p className="text-lg font-semibold opacity-90">
               {deadline ? new Date(deadline).toLocaleDateString('en-US', { 
                 weekday: 'long', 
                 year: 'numeric', 
@@ -655,10 +655,10 @@ export default function StudyPlan({ workspaceId, workspaceName, deadline }) {
               }) : 'Not set'}
             </p>
           </div>
-          <div className="text-center bg-white bg-opacity-20 backdrop-blur rounded-2xl p-6 border-2 border-white border-opacity-30">
-            <Calendar size={48} className="mx-auto mb-2" />
-            <p className="text-5xl font-black">{daysLeft}</p>
-            <p className="font-bold text-sm">Days Left</p>
+          <div className="text-center bg-white/20 backdrop-blur rounded-xl p-6 border border-white/30">
+            <Calendar size={32} className="mx-auto mb-2" />
+            <p className="text-4xl font-bold">{daysLeft}</p>
+            <p className="font-semibold text-sm">Days Left</p>
           </div>
         </div>
 
@@ -666,10 +666,10 @@ export default function StudyPlan({ workspaceId, workspaceName, deadline }) {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="mt-4 bg-white bg-opacity-20 backdrop-blur rounded-xl p-4"
+            className="mt-4 bg-white/20 backdrop-blur rounded-lg p-3"
           >
-            <p className="flex items-center gap-2 font-semibold">
-              <AlertCircle size={20} />
+            <p className="flex items-center gap-2 font-semibold text-sm">
+              <AlertCircle size={18} />
               ⚠️ Less than a week left! Time to focus and prioritize!
             </p>
           </motion.div>
@@ -679,22 +679,22 @@ export default function StudyPlan({ workspaceId, workspaceName, deadline }) {
       {/* Generate Button */}
       {!plan && (
         <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.99 }}
           onClick={generatePlan}
           disabled={loading || !deadline}
-          className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-6 rounded-2xl font-bold text-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 rounded-xl font-semibold text-lg hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           {loading ? (
-            <span className="flex items-center justify-center gap-3">
+            <>
               <Loader className="animate-spin" size={24} />
               Crafting your perfect study plan...
-            </span>
+            </>
           ) : (
-            <span className="flex items-center justify-center gap-3">
+            <>
               <Brain size={24} />
               Generate AI Study Plan
-            </span>
+            </>
           )}
         </motion.button>
       )}
@@ -704,40 +704,40 @@ export default function StudyPlan({ workspaceId, workspaceName, deadline }) {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-3xl p-8 shadow-2xl border-2 border-purple-200"
+          className="bg-white rounded-2xl p-8 border border-slate-200"
         >
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <Target className="text-green-500" size={32} />
-              <h3 className="text-3xl font-black text-gray-800">Your Personalized Study Plan</h3>
+              <Target className="text-emerald-500" size={28} />
+              <h3 className="text-2xl font-bold text-slate-800">Your Personalized Study Plan</h3>
             </div>
           </div>
 
           {/* Plan Stats */}
           {planData && (
             <div className="grid grid-cols-3 gap-4 mb-6">
-              <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-4 border-2 border-blue-200">
+              <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
                 <div className="flex items-center gap-2 text-blue-700 mb-1">
-                  <Calendar size={18} />
-                  <span className="text-sm font-semibold">Days Left</span>
+                  <Calendar size={16} />
+                  <span className="text-xs font-semibold">Days Left</span>
                 </div>
-                <p className="text-3xl font-black text-blue-900">{planData.days_left}</p>
+                <p className="text-2xl font-bold text-blue-900">{planData.days_left}</p>
               </div>
 
-              <div className="bg-gradient-to-br from-green-50 to-teal-50 rounded-xl p-4 border-2 border-green-200">
-                <div className="flex items-center gap-2 text-green-700 mb-1">
-                  <Target size={18} />
-                  <span className="text-sm font-semibold">Documents</span>
+              <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-200">
+                <div className="flex items-center gap-2 text-emerald-700 mb-1">
+                  <Target size={16} />
+                  <span className="text-xs font-semibold">Documents</span>
                 </div>
-                <p className="text-3xl font-black text-green-900">{planData.document_count}</p>
+                <p className="text-2xl font-bold text-emerald-900">{planData.document_count}</p>
               </div>
 
-              <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-4 border-2 border-purple-200">
+              <div className="bg-purple-50 rounded-xl p-4 border border-purple-200">
                 <div className="flex items-center gap-2 text-purple-700 mb-1">
-                  <Clock size={18} />
-                  <span className="text-sm font-semibold">Status</span>
+                  <Clock size={16} />
+                  <span className="text-xs font-semibold">Status</span>
                 </div>
-                <p className="text-lg font-black text-purple-900">
+                <p className="text-lg font-bold text-purple-900">
                   {planData.days_left > 7 ? '✅ On Track' : '⚡ Urgent'}
                 </p>
               </div>
@@ -745,34 +745,32 @@ export default function StudyPlan({ workspaceId, workspaceName, deadline }) {
           )}
           
           {/* Plan Content */}
-          <div className="bg-gradient-to-br from-gray-50 to-purple-50 rounded-2xl p-6 mb-6 max-h-[500px] overflow-y-auto border-2 border-purple-100">
-            <div className="prose max-w-none">
-              <pre className="whitespace-pre-wrap text-gray-800 leading-relaxed font-sans text-base">
-                {plan}
-              </pre>
-            </div>
+          <div className="bg-slate-50 rounded-xl p-6 mb-6 max-h-[500px] overflow-y-auto border border-slate-200">
+            <pre className="whitespace-pre-wrap text-slate-800 leading-relaxed font-sans text-sm">
+              {plan}
+            </pre>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-4">
+          <div className="flex gap-3">
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
               onClick={generatePlan}
               disabled={loading}
-              className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white py-4 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2"
             >
-              <RefreshCw size={20} />
+              <RefreshCw size={18} />
               Regenerate Plan
             </motion.button>
             
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
               onClick={downloadPlan}
-              className="flex-1 bg-gradient-to-r from-green-500 to-teal-600 text-white py-4 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2"
+              className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2"
             >
-              <Download size={20} />
+              <Download size={18} />
               Download Plan
             </motion.button>
           </div>
@@ -782,19 +780,21 @@ export default function StudyPlan({ workspaceId, workspaceName, deadline }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="mt-6 bg-blue-50 border-2 border-blue-200 rounded-2xl p-6"
+            className="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4"
           >
-            <h4 className="font-bold text-blue-900 mb-3 flex items-center gap-2">
-              <Brain className="text-blue-600" size={20} />
-              Study Tips
-            </h4>
-            <ul className="text-sm text-blue-800 space-y-2 list-disc list-inside">
-              <li>Stick to the schedule as closely as possible</li>
-              <li>Use the chat feature to clarify any doubts</li>
-              <li>Review flashcards daily for better retention</li>
-              <li>Take short breaks every 25-30 minutes (Pomodoro technique)</li>
-              <li>Adjust the plan if needed - it's okay to be flexible!</li>
-            </ul>
+            <div className="flex items-start gap-3">
+              <Brain className="text-blue-600 flex-shrink-0" size={20} />
+              <div>
+                <h4 className="font-semibold text-blue-900 mb-2 text-sm">Study Tips</h4>
+                <ul className="text-xs text-blue-800 space-y-1">
+                  <li>• Stick to the schedule as closely as possible</li>
+                  <li>• Use the chat feature to clarify doubts</li>
+                  <li>• Review flashcards daily for retention</li>
+                  <li>• Take breaks every 25-30 minutes (Pomodoro)</li>
+                  <li>• Adjust the plan if needed - flexibility is okay!</li>
+                </ul>
+              </div>
+            </div>
           </motion.div>
         </motion.div>
       )}
@@ -804,20 +804,21 @@ export default function StudyPlan({ workspaceId, workspaceName, deadline }) {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="bg-purple-50 border-2 border-purple-200 rounded-2xl p-6"
+          className="bg-blue-50 border border-blue-200 rounded-xl p-4"
         >
-          <h4 className="font-bold text-purple-900 mb-2 flex items-center gap-2">
-            <Brain className="text-purple-600" size={20} />
-            How AI Study Plans Work
-          </h4>
-          <ul className="text-sm text-purple-800 space-y-1 list-disc list-inside">
-            <li>Analyzes your deadline and available time</li>
-            <li>Reviews all uploaded documents and their content</li>
-            <li>Creates a day-by-day breakdown with specific topics</li>
-            <li>Includes review sessions using spaced repetition</li>
-            <li>Reserves final days for comprehensive review</li>
-            <li>Provides realistic time estimates for each activity</li>
-          </ul>
+          <div className="flex items-start gap-3">
+            <Brain className="text-blue-600 flex-shrink-0" size={20} />
+            <div>
+              <h4 className="font-semibold text-blue-900 mb-1 text-sm">How AI Study Plans Work</h4>
+              <ul className="text-xs text-blue-800 space-y-1">
+                <li>• Analyzes your deadline and available time</li>
+                <li>• Reviews all uploaded documents and content</li>
+                <li>• Creates day-by-day breakdown with specific topics</li>
+                <li>• Includes review sessions using spaced repetition</li>
+                <li>• Reserves final days for comprehensive review</li>
+              </ul>
+            </div>
+          </div>
         </motion.div>
       )}
     </div>

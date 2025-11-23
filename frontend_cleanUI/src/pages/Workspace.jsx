@@ -43,44 +43,44 @@ export default function Workspace() {
   };
 
   const tabs = [
-    { id: 'chat', label: 'Chat', icon: MessageSquare, color: 'from-blue-500 to-purple-600' },
-    { id: 'summaries', label: 'Summaries', icon: BookOpen, color: 'from-indigo-500 to-purple-600' },
-    { id: 'upload', label: 'Upload Documents', icon: Upload, color: 'from-green-500 to-teal-600' },
-    { id: 'documents', label: 'My Documents', icon: FileText, color: 'from-orange-500 to-red-600' },
-    { id: 'plan', label: 'Study Plan', icon: Calendar, color: 'from-pink-500 to-rose-600' },
-    { id: 'flashcards', label: 'Flashcards', icon: Brain, color: 'from-purple-500 to-indigo-600' },
+    { id: 'chat', label: 'Chat', icon: MessageSquare },
+    { id: 'summaries', label: 'Summaries', icon: BookOpen },
+    { id: 'upload', label: 'Upload', icon: Upload },
+    { id: 'documents', label: 'Documents', icon: FileText },
+    { id: 'plan', label: 'Study Plan', icon: Calendar },
+    { id: 'flashcards', label: 'Flashcards', icon: Brain },
   ];
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-indigo-50">
         <div className="text-center">
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
             className="inline-block"
           >
-            <MessageSquare className="text-purple-600" size={64} />
+            <MessageSquare className="text-indigo-600" size={64} />
           </motion.div>
-          <p className="mt-4 text-gray-600 text-lg">Loading workspace...</p>
+          <p className="mt-4 text-slate-600 text-lg">Loading workspace...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50">
       <Navbar />
 
-      <div className="max-w-7xl mx-auto p-8">
+      <div className="max-w-7xl mx-auto p-6 md:p-8">
         {/* Back Button */}
         <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={() => navigate('/dashboard')}
-          className="mb-6 flex items-center gap-2 text-purple-600 font-bold hover:text-purple-800 transition-colors"
+          className="mb-6 flex items-center gap-2 text-slate-600 hover:text-slate-800 font-medium transition-colors"
         >
-          <ArrowLeft size={20} />
+          <ArrowLeft size={18} />
           Back to Dashboard
         </motion.button>
 
@@ -90,33 +90,34 @@ export default function Workspace() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-2">
+          <h1 className="text-4xl md:text-5xl font-bold text-slate-800 mb-2">
             {workspace.name}
           </h1>
           {workspace.deadline && (
-            <p className="text-gray-600 text-lg">
-              📅 Deadline: {new Date(workspace.deadline).toLocaleDateString()}
-            </p>
+            <div className="flex items-center gap-2 text-slate-600">
+              <Calendar size={18} />
+              <span>Deadline: {new Date(workspace.deadline).toLocaleDateString()}</span>
+            </div>
           )}
         </motion.div>
 
         {/* Tabs */}
-        <div className="flex gap-4 mb-8">
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
           {tabs.map(tab => {
             const Icon = tab.icon;
             return (
               <motion.button
                 key={tab.id}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-6 py-3 rounded-full font-bold text-white shadow-lg transition-all ${
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold whitespace-nowrap transition-all duration-200 ${
                   activeTab === tab.id
-                    ? `bg-gradient-to-r ${tab.color}`
-                    : 'bg-gray-400 opacity-60'
+                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg'
+                    : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
                 }`}
               >
-                <Icon size={20} />
+                <Icon size={18} />
                 {tab.label}
               </motion.button>
             );
@@ -128,7 +129,8 @@ export default function Workspace() {
           key={activeTab}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-3xl shadow-2xl p-8"
+          transition={{ duration: 0.3 }}
+          className="bg-white rounded-2xl border border-slate-200 p-6 md:p-8"
         >
           {activeTab === 'chat' && <ChatInterface workspaceId={workspace.id} />}
           {activeTab === 'summaries' && (

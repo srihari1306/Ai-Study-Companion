@@ -23,6 +23,8 @@ Thumbs.db
 
 # Node / React
 frontend/node_modules/
+frontend_cleanUI/node_modules/
+frontend_cleanUI/dist/
 frontend/dist/
 npm-debug.log
 yarn-error.log
