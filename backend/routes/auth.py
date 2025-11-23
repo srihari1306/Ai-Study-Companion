@@ -27,13 +27,13 @@ def login():
         return jsonify({'message':'Login successful'})
     return jsonify({'message':'Invalid Credentials'}),401
     
-@auth_bp.route('/logout')
+@auth_bp.route('/logout',methods=['POST'])
 @login_required
 def logout():
     logout_user()
     return jsonify({"message":'Logged out'})
 
-@auth_bp.route('/current_user')
+@auth_bp.route('/current_user', methods=['GET'])
 @login_required
 def get_current_user():
     return jsonify({'username':current_user.username})

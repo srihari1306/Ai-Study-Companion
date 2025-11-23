@@ -22,8 +22,8 @@ def get_workspaces():
     return jsonify([{
         'id':w.id,
         'name':w.name,
-        'deadline':w.deadline,
-        'created_by':w.created_at.isoformat()
+        'deadline':w.deadline.isoformat() if w.deadline else None,
+        'created_by':w.created_at.isoformat() if w.created_at else None
     } for w in workspaces])
 
 @workspace_bp.route('/workspaces', methods=['POST'])
@@ -50,8 +50,14 @@ def create_workspaces():
 
     db.session.add(workspace)
     db.session.commit()
+    db.session.refresh(workspace)
 
-    return jsonify({"id":workspace.id,"name":workspace.name})
+    return jsonify({
+        "id": workspace.id,
+        "name": workspace.name,
+        "deadline": workspace.deadline.isoformat() if workspace.deadline else None,
+        "created_by": workspace.created_at.isoformat() if workspace.created_at else None
+    })
 
 @workspace_bp.route('/workspaces/<int:workspace_id>', methods=['DELETE'])
 @login_required
@@ -63,8 +69,7 @@ def delete_workspace(workspace_id):
     try:
         documents = Document.query.filter_by(workspace_id=workspace_id).all()
         try:
-            collection = embebbing_sevice.get_or_create_collection(workspace_id)
-            embebbing_sevice.client._delete_collection(f"workspace_{workspace_id}")
+            embebbing_sevice.delete_workspace_collection(workspace_id)
         except Exception as e:
             print(f"Warning: Could not delete ChromaDB collection: {e}")
         
@@ -78,7 +83,7 @@ def delete_workspace(workspace_id):
         ChatMessage.query.filter_by(workspace_id=workspace_id).delete()
         Document.query.filter_by(workspace_id=workspace_id).delete()
         db.session.delete(workspace)
-        db.commit()
+        db.session.commit()
 
         return jsonify({"message":"Workspace deleted successfully"})
     except Exception as e:

@@ -57,3 +57,12 @@ class EmbeddingService:
         )
 
         return results["documents"][0] if results["documents"] else []
+    
+    def delete_workspace_collection(self, workspace_id):
+        try:
+            collection_name = f"workspace_{workspace_id}"
+            self.client.delete_collection(name=collection_name)
+            return True
+        except Exception as e:
+            print(f"Error deleting collection: {e}")
+            return False

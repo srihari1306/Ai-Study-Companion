@@ -32,19 +32,27 @@ export default function Dashboard() {
   const handleCreateWorkspace = async (e) => {
     e.preventDefault();
     
-    if (!newWorkspace.name) {
-      toast.error('Please enter a workspace name');
+    if (!newWorkspace.name || !newWorkspace.deadline) {
+      toast.error('Please enter both workspace name and deadline');
       return;
     }
 
     try {
-      const response = await api.post('/workspaces', newWorkspace);
+      const response = await api.post('/workspaces', {
+        name: newWorkspace.name,
+        deadline: newWorkspace.deadline
+      });
+      
       toast.success('Workspace created! 🎉');
-      setWorkspaces([...workspaces, response.data]);
+      
+      // Reload workspaces to get complete data with created_at
+      await loadWorkspaces();
+      
       setShowCreateModal(false);
       setNewWorkspace({ name: '', deadline: '' });
     } catch (error) {
-      toast.error('Failed to create workspace');
+      const errorMsg = error.response?.data?.error || 'Failed to create workspace';
+      toast.error(errorMsg);
     }
   };
 
@@ -191,9 +199,11 @@ export default function Dashboard() {
                     </div>
                   )}
 
-                  <div className="mt-4 text-xs text-gray-500">
-                    Created {new Date(workspace.created_at).toLocaleDateString()}
-                  </div>
+                  {workspace.created_by && (
+                    <div className="mt-4 text-xs text-gray-500">
+                      Created {new Date(workspace.created_by).toLocaleDateString()}
+                    </div>
+                  )}
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -233,18 +243,21 @@ export default function Dashboard() {
                     onChange={(e) => setNewWorkspace({ ...newWorkspace, name: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl border-2 border-purple-200 focus:border-purple-500 focus:outline-none"
                     placeholder="e.g., Data Structures, Chemistry Finals"
+                    required
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Deadline (Optional)
+                    Deadline *
                   </label>
                   <input
                     type="date"
                     value={newWorkspace.deadline}
                     onChange={(e) => setNewWorkspace({ ...newWorkspace, deadline: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl border-2 border-purple-200 focus:border-purple-500 focus:outline-none"
+                    required
+                    min={new Date().toISOString().split('T')[0]}
                   />
                 </div>
 

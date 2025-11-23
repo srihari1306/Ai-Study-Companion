@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { MessageSquare, Upload, ArrowLeft, FileText } from 'lucide-react';
+import { MessageSquare, Upload, ArrowLeft, FileText, Calendar } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../api/axios';
 import ChatInterface from '../components/ChatInterface';
 import DocumentUpload from '../components/DocumentUpload';
 import DocumentList from '../components/DocumentList';
+import StudyPlan from '../components/StudyPlan';
 import Navbar from '../components/Navbar';
 
 export default function Workspace() {
@@ -43,6 +44,7 @@ export default function Workspace() {
     { id: 'chat', label: 'Chat', icon: MessageSquare, color: 'from-blue-500 to-purple-600' },
     { id: 'upload', label: 'Upload Documents', icon: Upload, color: 'from-green-500 to-teal-600' },
     { id: 'documents', label: 'My Documents', icon: FileText, color: 'from-orange-500 to-red-600' },
+    { id: 'plan', label: 'Study Plan', icon: Calendar, color: 'from-pink-500 to-rose-600' },
   ];
 
   if (loading) {
@@ -135,6 +137,13 @@ export default function Workspace() {
             <DocumentList 
               workspaceId={workspace.id} 
               onDocumentDeleted={loadWorkspace}
+            />
+          )}
+          {activeTab === 'plan' && (
+            <StudyPlan 
+              workspaceId={workspace.id}
+              workspaceName={workspace.name}
+              deadline={workspace.deadline}
             />
           )}
         </motion.div>

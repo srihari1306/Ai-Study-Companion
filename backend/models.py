@@ -49,3 +49,12 @@ class ChatMessage(db.Model):
     user_message = db.Column(db.Text, nullable=False)
     ai_response = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.now)
+
+class StudyPlan(db.Model):
+    __tablename__ = 'study_plans'
+    id = db.Column(db.Integer, primary_key=True)
+    workspace_id = db.Column(db.Integer, db.ForeignKey('workspace.id'), unique=True)
+    plan_text = db.Column(db.Text, nullable=False)
+    generated_at = db.Column(db.DateTime, default=datetime.now)
+
+    workspace = db.relationship("Workspace", backref='study_plan', lazy=True)
