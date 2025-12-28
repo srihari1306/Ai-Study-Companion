@@ -24,7 +24,7 @@ class User(db.Model, UserMixin):
 class Workspace(db.Model):
     __tablename__ = 'workspace'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(200), unique=True, nullable=False)
+    name = db.Column(db.String(200), nullable=False)
     deadline = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     created_at = db.Column(db.DateTime, default=datetime.now)

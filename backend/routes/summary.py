@@ -51,7 +51,6 @@ def get_all_summaries(workspace_id):
             summaries.append({
                 'document_id': doc.id,
                 'filename': doc.filename,
-                'uploaded_at': doc.uploaded_at.isoformat(),
                 'summary': summary_data['summary'],
                 'key_points': summary_data['key_points'],
                 'topics': summary_data['topics'],
@@ -107,7 +106,6 @@ def get_document_summary(document_id):
         return jsonify({
             'document_id': document.id,
             'filename': document.filename,
-            'uploaded_at': document.uploaded_at.isoformat(),
             'summary': summary_data['summary'],
             'key_points': summary_data['key_points'],
             'topics': summary_data['topics'],

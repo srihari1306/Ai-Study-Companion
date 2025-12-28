@@ -1,291 +1,115 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, FolderOpen, Calendar, LogOut, Sparkles, Trash2 } from 'lucide-react';
-import toast from 'react-hot-toast';
-import api from '../api/axios';
-import Navbar from '../components/Navbar';
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
+import { workspaceAPI } from '../api/client'
+import Navbar from '../components/Layout/Navbar'
+import WorkspaceCard from '../components/Workspace/WorkspaceCard'
+import CreateWorkspaceModal from '../components/Workspace/CreateWorkspaceModal'
+import { Plus, FolderOpen } from 'lucide-react'
 
 export default function Dashboard() {
-  const [workspaces, setWorkspaces] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [newWorkspace, setNewWorkspace] = useState({ name: '', deadline: '' });
-  const [deletingId, setDeletingId] = useState(null);
-  const navigate = useNavigate();
+  const [workspaces, setWorkspaces] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [showModal, setShowModal] = useState(false)
+  const { user } = useAuth()
+  const navigate = useNavigate()
 
   useEffect(() => {
-    loadWorkspaces();
-  }, []);
+    loadWorkspaces()
+  }, [])
 
   const loadWorkspaces = async () => {
     try {
-      const response = await api.get('/workspaces');
-      setWorkspaces(response.data);
+      const response = await workspaceAPI.getAll()
+      setWorkspaces(response.data)
     } catch (error) {
-      toast.error('Failed to load workspaces');
+      console.error('Failed to load workspaces:', error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
-  const handleCreateWorkspace = async (e) => {
-    e.preventDefault();
-    
-    if (!newWorkspace.name || !newWorkspace.deadline) {
-      toast.error('Please enter both workspace name and deadline');
-      return;
-    }
-
+  const handleCreateWorkspace = async (name, deadline) => {
     try {
-      const response = await api.post('/workspaces', {
-        name: newWorkspace.name,
-        deadline: newWorkspace.deadline
-      });
-      
-      toast.success('Workspace created! 🎉');
-      
-      // Reload workspaces to get complete data with created_at
-      await loadWorkspaces();
-      
-      setShowCreateModal(false);
-      setNewWorkspace({ name: '', deadline: '' });
+      await workspaceAPI.create(name, deadline)
+      setShowModal(false)
+      loadWorkspaces()
     } catch (error) {
-      const errorMsg = error.response?.data?.error || 'Failed to create workspace';
-      toast.error(errorMsg);
+      throw error
     }
-  };
+  }
 
-  const handleLogout = async () => {
-    try {
-      await api.post('/logout');
-      toast.success('Logged out successfully');
-      navigate('/login');
-    } catch (error) {
-      toast.error('Logout failed');
+  const handleDeleteWorkspace = async (workspaceId) => {
+    if (window.confirm('Are you sure? This will delete all documents and data.')) {
+      try {
+        await workspaceAPI.delete(workspaceId)
+        loadWorkspaces()
+      } catch (error) {
+        alert('Failed to delete workspace')
+      }
     }
-  };
-
-  const handleDeleteWorkspace = async (e, workspaceId, workspaceName) => {
-    e.stopPropagation(); // Prevent workspace navigation
-    
-    if (!confirm(`Are you sure you want to delete "${workspaceName}"? This will delete all documents and chat history. This action cannot be undone.`)) {
-      return;
-    }
-
-    setDeletingId(workspaceId);
-    
-    try {
-      await api.delete(`/workspaces/${workspaceId}`);
-      toast.success('Workspace deleted successfully');
-      setWorkspaces(workspaces.filter(w => w.id !== workspaceId));
-    } catch (error) {
-      toast.error('Failed to delete workspace');
-      console.error('Error deleting workspace:', error);
-    } finally {
-      setDeletingId(null);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-        >
-          <Sparkles className="text-purple-600" size={64} />
-        </motion.div>
-      </div>
-    );
   }
 
   return (
-    <div className="min-h-screen">
-      <Navbar onLogout={handleLogout} />
-
-      <div className="max-w-7xl mx-auto p-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-4">
-            Your Workspaces 🚀
-          </h1>
-          <p className="text-gray-600 text-lg">
-            Create a workspace for each subject or project you're studying
-          </p>
-        </motion.div>
-
-        {/* Create New Workspace Button */}
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={() => setShowCreateModal(true)}
-          className="mb-8 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl transition-all flex items-center gap-3"
-        >
-          <Plus size={24} />
-          Create New Workspace
-        </motion.button>
-
-        {/* Workspaces Grid */}
-        {workspaces.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-20"
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Welcome back, {user?.username}! 👋
+            </h1>
+            <p className="text-gray-600 mt-1">Manage your study workspaces and track progress</p>
+          </div>
+          <button
+            onClick={() => setShowModal(true)}
+            className="btn-primary flex items-center gap-2"
           >
-            <FolderOpen className="mx-auto mb-4 text-gray-400" size={96} />
-            <h2 className="text-2xl font-bold text-gray-600 mb-2">
-              No workspaces yet
-            </h2>
-            <p className="text-gray-500">
-              Create your first workspace to get started!
-            </p>
-          </motion.div>
+            <Plus className="w-5 h-5" />
+            New Workspace
+          </button>
+        </div>
+
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+          </div>
+        ) : workspaces.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+              <FolderOpen className="w-8 h-8 text-gray-400" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No workspaces yet</h3>
+            <p className="text-gray-600 mb-6">Create your first workspace to get started</p>
+            <button
+              onClick={() => setShowModal(true)}
+              className="btn-primary inline-flex items-center gap-2"
+            >
+              <Plus className="w-5 h-5" />
+              Create Workspace
+            </button>
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <AnimatePresence>
-              {workspaces.map((workspace, index) => (
-                <motion.div
-                  key={workspace.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ delay: index * 0.1 }}
-                  whileHover={{ scale: 1.05, rotate: 1 }}
-                  onClick={() => navigate(`/workspace/${workspace.id}`)}
-                  className="bg-white rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all cursor-pointer border-2 border-transparent hover:border-purple-300 relative"
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="bg-gradient-to-br from-purple-500 to-pink-500 p-4 rounded-2xl">
-                      <FolderOpen className="text-white" size={32} />
-                    </div>
-                    
-                    {/* Delete Button */}
-                    <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      onClick={(e) => handleDeleteWorkspace(e, workspace.id, workspace.name)}
-                      disabled={deletingId === workspace.id}
-                      className="bg-red-100 hover:bg-red-200 text-red-600 p-2 rounded-full transition-colors disabled:opacity-50"
-                      title="Delete workspace"
-                    >
-                      {deletingId === workspace.id ? (
-                        <motion.div
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                        >
-                          <Trash2 size={18} />
-                        </motion.div>
-                      ) : (
-                        <Trash2 size={18} />
-                      )}
-                    </motion.button>
-                  </div>
-                  
-                  <h3 className="text-2xl font-bold text-gray-800 mb-2">
-                    {workspace.name}
-                  </h3>
-                  
-                  {workspace.deadline && (
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <Calendar size={16} />
-                      <span className="text-sm">
-                        Due: {new Date(workspace.deadline).toLocaleDateString()}
-                      </span>
-                    </div>
-                  )}
-
-                  {workspace.created_by && (
-                    <div className="mt-4 text-xs text-gray-500">
-                      Created {new Date(workspace.created_by).toLocaleDateString()}
-                    </div>
-                  )}
-                </motion.div>
-              ))}
-            </AnimatePresence>
+            {workspaces.map((workspace) => (
+              <WorkspaceCard
+                key={workspace.id}
+                workspace={workspace}
+                onClick={() => navigate(`/workspace/${workspace.id}`)}
+                onDelete={handleDeleteWorkspace}
+              />
+            ))}
           </div>
         )}
       </div>
 
-      {/* Create Workspace Modal */}
-      <AnimatePresence>
-        {showCreateModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-            onClick={() => setShowCreateModal(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-3xl p-8 w-full max-w-md"
-            >
-              <h2 className="text-3xl font-black text-gray-800 mb-6">
-                Create New Workspace
-              </h2>
-              
-              <form onSubmit={handleCreateWorkspace} className="space-y-6">
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Workspace Name *
-                  </label>
-                  <input
-                    type="text"
-                    value={newWorkspace.name}
-                    onChange={(e) => setNewWorkspace({ ...newWorkspace, name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border-2 border-purple-200 focus:border-purple-500 focus:outline-none"
-                    placeholder="e.g., Data Structures, Chemistry Finals"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Deadline *
-                  </label>
-                  <input
-                    type="date"
-                    value={newWorkspace.deadline}
-                    onChange={(e) => setNewWorkspace({ ...newWorkspace, deadline: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border-2 border-purple-200 focus:border-purple-500 focus:outline-none"
-                    required
-                    min={new Date().toISOString().split('T')[0]}
-                  />
-                </div>
-
-                <div className="flex gap-4">
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    type="button"
-                    onClick={() => setShowCreateModal(false)}
-                    className="flex-1 px-6 py-3 rounded-xl border-2 border-gray-300 font-bold text-gray-700 hover:bg-gray-100 transition-colors"
-                  >
-                    Cancel
-                  </motion.button>
-                  
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    type="submit"
-                    className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all"
-                  >
-                    Create
-                  </motion.button>
-                </div>
-              </form>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {showModal && (
+        <CreateWorkspaceModal
+          onClose={() => setShowModal(false)}
+          onCreate={handleCreateWorkspace}
+        />
+      )}
     </div>
-  );
+  )
 }

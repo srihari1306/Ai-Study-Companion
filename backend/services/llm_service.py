@@ -1,7 +1,7 @@
 import ollama
 
 class LLMService:
-    def __init__(self, model_name="llama3.1"):
+    def __init__(self, model_name="qwen:7b"):
         self.model_name = model_name
     
     def generate_answer(self, question, context_chunks):

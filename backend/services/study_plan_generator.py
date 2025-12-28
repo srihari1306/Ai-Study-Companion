@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 import ollama
 
 class StudyPlanGenerator:
-    def __init__(self,model_name="llama3.1"):
+    def __init__(self,model_name="qwen:7b"):
         self.model_name=model_name
 
     def generate_plan(self, workspace_name, deadline, documents):
